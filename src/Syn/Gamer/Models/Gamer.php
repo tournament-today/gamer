@@ -352,12 +352,37 @@ class Gamer extends Model implements GamerInterface, RemindableInterface, UserIn
 		return (bool) Channel::load('presence', 'user', $this -> id) -> occupied;
 	}
 
+	/**
+	 * Load all notification to be received
+	 * @return mixed
+	 */
 	public function notifications()
 	{
 		return $this -> hasMany('Syn\Notification\Models\Notification', 'receiver_id') -> orderBy('id', 'DESC');
 	}
+
+	/**
+	 * Load any send notifications
+	 * @return mixed
+	 */
 	public function sentNotifications()
 	{
 		return $this -> hasMany('Syn\Notification\Models\Notification', 'sender_id') -> orderBy('id', 'DESC');
+	}
+
+	public function getRelatedGamersAttribute()
+	{
+		$related = [];
+
+		foreach($this->ips as $ip)
+		{
+			foreach($ip->related as $relatedAccount)
+			{
+				$related[$relatedAccount->id]['gamer'] = $relatedAccount;
+				$related[$relatedAccount->id]['matches'][] = $ip;
+			}
+		}
+
+		return $related;
 	}
 }
