@@ -35,7 +35,7 @@ class GamerController extends Controller
 	 */
 	public function edit(Gamer $gamer, $name = null)
 	{
-		if($gamer -> id != App::make('Visitor') -> id)
+		if(!$gamer -> allowEdit())
 			return $this -> notAllowed('Edit account', 'Insufficient rights');
 
 		$this -> icon = 'edit';

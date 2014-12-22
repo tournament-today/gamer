@@ -10,6 +10,7 @@ use Illuminate\Auth\Reminders\RemindableTrait;
 use Illuminate\Auth\UserInterface;
 use Illuminate\Database\Eloquent\SoftDeletingTrait;
 use Syn\Framework\Abstracts\Model;
+use Syn\Framework\Exceptions\MissingMethodException;
 use Syn\Gamer\Interfaces\GamerInterface;
 use Syn\Socket\Classes\Channel;
 
@@ -44,6 +45,25 @@ class Gamer extends Model implements GamerInterface, RemindableInterface, UserIn
 
 	protected $hidden = ['password', 'username', 'email_address', 'remember_token'];
 	protected $appends = ['publishedName', 'countryFlag'];
+
+	/**
+	 * Allow deletion of this account
+	 * @return bool
+	 */
+	public function allowDelete()
+	{
+		return $this->allowEdit();
+	}
+
+	/**
+	 * Allow editing of this account
+	 * @return bool
+	 */
+	public function allowEdit()
+	{
+		return $this->id == Auth::user() -> id || Auth::user() -> admin;
+	}
+
 
 	/**
 	 * Shows a formatted version of the complete name
